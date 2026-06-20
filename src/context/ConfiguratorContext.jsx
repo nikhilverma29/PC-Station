@@ -37,6 +37,7 @@ const initialState = {
   savedBuilds: loadSavedBuilds(),
   compareList: [],
   currency: 'INR',
+  editingBuildId: null,
 };
 
 function configuratorReducer(state, action) {
@@ -70,6 +71,23 @@ function configuratorReducer(state, action) {
 
     case 'SAVE_BUILD': {
       const { name } = action.payload;
+
+      if (state.editingBuildId) {
+        const updatedBuilds = state.savedBuilds.map((b) =>
+          b.id === state.editingBuildId
+            ? {
+                ...b,
+                name,
+                date: new Date().toISOString(),
+                selections: { ...state.selections },
+                totalPrice: calculateTotal(state.selections),
+              }
+            : b
+        );
+        persistBuilds(updatedBuilds);
+        return { ...state, savedBuilds: updatedBuilds };
+      }
+
       const newBuild = {
         id: `build-${Date.now()}`,
         name,
@@ -79,7 +97,7 @@ function configuratorReducer(state, action) {
       };
       const updatedBuilds = [newBuild, ...state.savedBuilds].slice(0, 10);
       persistBuilds(updatedBuilds);
-      return { ...state, savedBuilds: updatedBuilds };
+      return { ...state, savedBuilds: updatedBuilds, editingBuildId: newBuild.id };
     }
 
     case 'DELETE_BUILD': {
@@ -87,7 +105,10 @@ function configuratorReducer(state, action) {
       const updatedBuilds = state.savedBuilds.filter((b) => b.id !== buildId);
       const updatedCompare = state.compareList.filter((id) => id !== buildId);
       persistBuilds(updatedBuilds);
-      return { ...state, savedBuilds: updatedBuilds, compareList: updatedCompare };
+      
+      const newEditingBuildId = state.editingBuildId === buildId ? null : state.editingBuildId;
+
+      return { ...state, savedBuilds: updatedBuilds, compareList: updatedCompare, editingBuildId: newEditingBuildId };
     }
 
     case 'LOAD_BUILD': {
@@ -98,6 +119,19 @@ function configuratorReducer(state, action) {
         ...state,
         selections: { ...build.selections },
         currentStep: STEP_ORDER.length, // Go to review
+        editingBuildId: null,
+      };
+    }
+
+    case 'LOAD_BUILD_FOR_EDIT': {
+      const { buildId } = action.payload;
+      const build = state.savedBuilds.find((b) => b.id === buildId);
+      if (!build) return state;
+      return {
+        ...state,
+        selections: { ...build.selections },
+        currentStep: STEP_ORDER.length, // Go to review
+        editingBuildId: buildId,
       };
     }
 
@@ -120,6 +154,7 @@ function configuratorReducer(state, action) {
         ...state,
         currentStep: 0,
         selections: { ...initialSelections },
+        editingBuildId: null,
       };
 
     case 'SET_CURRENCY':

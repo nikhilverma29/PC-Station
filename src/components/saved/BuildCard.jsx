@@ -1,27 +1,50 @@
-import { Download, Trash2, GitCompare, Monitor } from 'lucide-react';
+import { Download, Trash2, GitCompare, Monitor, Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useConfigurator } from '@/hooks/useConfigurator';
 import { useCurrency } from '@/hooks/useCurrency';
 import { STEP_ORDER } from '@/data/products';
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
-export default function BuildCard({ build, onDrawerClose }) {
-  const { compareList, dispatch } = useConfigurator();
+export default function BuildCard({ build, onDrawerClose, onActiveDeleted }) {
+  const { compareList, dispatch, editingBuildId } = useConfigurator();
   const { formatPrice } = useCurrency();
   const isComparing = compareList.includes(build.id);
   const canCompare = compareList.length < 2 || isComparing;
+  
+  const [loadConfirmOpen, setLoadConfirmOpen] = useState(false);
+  const [editConfirmOpen, setEditConfirmOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
-  function handleLoad() {
-    if (confirm('Load this build? Current unsaved progress will be lost.')) {
-      dispatch({ type: 'LOAD_BUILD', payload: { buildId: build.id } });
-      onDrawerClose();
-    }
+  function handleLoad(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    dispatch({ type: 'LOAD_BUILD', payload: { buildId: build.id } });
+    setLoadConfirmOpen(false);
+    if (onDrawerClose) onDrawerClose();
   }
 
-  function handleDelete() {
-    if (confirm('Are you sure you want to delete this saved build?')) {
-      dispatch({ type: 'DELETE_BUILD', payload: { buildId: build.id } });
+  function handleEdit(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    dispatch({ type: 'LOAD_BUILD_FOR_EDIT', payload: { buildId: build.id } });
+    setEditConfirmOpen(false);
+    if (onDrawerClose) onDrawerClose();
+  }
+
+  function handleDelete(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    if (editingBuildId === build.id && onActiveDeleted) {
+      onActiveDeleted();
     }
+    dispatch({ type: 'DELETE_BUILD', payload: { buildId: build.id } });
+    setDeleteConfirmOpen(false);
   }
 
   function handleCompare() {
@@ -92,16 +115,77 @@ export default function BuildCard({ build, onDrawerClose }) {
           </Button>
 
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={handleDelete}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteConfirmOpen(true)}>
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
-            <Button size="sm" className="h-7 px-3 text-xs gap-1.5" onClick={handleLoad}>
+            <Button variant="secondary" size="sm" className="h-7 px-3 text-xs gap-1.5" onClick={() => setEditConfirmOpen(true)}>
+              <Edit2 className="h-3 w-3" />
+              Edit
+            </Button>
+            <Button size="sm" className="h-7 px-3 text-xs gap-1.5" onClick={() => setLoadConfirmOpen(true)}>
               <Download className="h-3 w-3" />
               Load
             </Button>
           </div>
         </div>
       </div>
+
+      <Dialog open={loadConfirmOpen} onOpenChange={setLoadConfirmOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Load Build?</DialogTitle>
+            <DialogDescription>
+              Loading this build will replace your current unsaved selections. Are you sure you want to continue?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setLoadConfirmOpen(false)} onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setLoadConfirmOpen(false); }}>
+              Cancel
+            </Button>
+            <Button size="sm" onClick={handleLoad} onPointerDown={handleLoad}>
+              Yes, Load Build
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={editConfirmOpen} onOpenChange={setEditConfirmOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Edit Build?</DialogTitle>
+            <DialogDescription>
+              Editing this build will load its components and replace your current unsaved selections. Saving changes will overwrite this build. Are you sure you want to continue?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setEditConfirmOpen(false)} onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setEditConfirmOpen(false); }}>
+              Cancel
+            </Button>
+            <Button size="sm" onClick={handleEdit} onPointerDown={handleEdit}>
+              Yes, Edit Build
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Build?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this saved build? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setDeleteConfirmOpen(false)} onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setDeleteConfirmOpen(false); }}>
+              Cancel
+            </Button>
+            <Button variant="destructive" size="sm" onClick={handleDelete} onPointerDown={handleDelete}>
+              Yes, Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

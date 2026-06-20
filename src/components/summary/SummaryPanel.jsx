@@ -9,6 +9,7 @@ import {
   Loader2,
   CircleCheck,
   ShieldAlert,
+  RotateCcw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -29,9 +30,12 @@ import {
 import { Input } from '@/components/ui/input';
 
 export default function SummaryPanel() {
-  const { selections, totalPrice, compatibilityIssues, completedSteps, dispatch } = useConfigurator();
+  const { selections, totalPrice, compatibilityIssues, completedSteps, dispatch, savedBuilds, editingBuildId } = useConfigurator();
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [incompleteWarningOpen, setIncompleteWarningOpen] = useState(false);
   const [buildName, setBuildName] = useState('');
+  const [nameError, setNameError] = useState('');
 
   const hasSelections = completedSteps.length > 0;
   const isComplete = completedSteps.length === STEP_ORDER.length;
@@ -61,12 +65,45 @@ export default function SummaryPanel() {
     return { label: 'Select Components To Begin', color: 'text-muted-foreground/60', icon: null, bg: 'bg-muted/20' };
   }, [errors.length, warnings.length, isComplete, hasSelections]);
 
+  function handleSaveClick() {
+    if (completedSteps.length < STEP_ORDER.length) {
+      setIncompleteWarningOpen(true);
+      return;
+    }
+    const editBuild = editingBuildId ? savedBuilds.find(b => b.id === editingBuildId) : null;
+    setBuildName(editBuild ? editBuild.name : '');
+    setNameError('');
+    setSaveDialogOpen(true);
+  }
+
   function handleSave() {
-    if (!buildName.trim()) return;
-    dispatch({ type: 'SAVE_BUILD', payload: { name: buildName.trim() } });
+    const trimmedName = buildName.trim();
+    if (!trimmedName) {
+      setNameError("Please enter a valid build name");
+      return;
+    }
+    
+    const isDuplicate = savedBuilds.some(b => 
+      b.name.trim().toLowerCase() === trimmedName.toLowerCase() && b.id !== editingBuildId
+    );
+    
+    if (isDuplicate) {
+      setNameError("A build with this name already exists. Please choose a different name.");
+      return;
+    }
+
+    dispatch({ type: 'SAVE_BUILD', payload: { name: trimmedName } });
     setBuildName('');
+    setNameError('');
     setSaveDialogOpen(false);
   }
+
+  function handleReset() {
+    dispatch({ type: 'RESET_BUILD' });
+    setResetDialogOpen(false);
+  }
+
+  const missingSteps = STEP_ORDER.filter(s => !selections[s]);
 
   return (
     <div className="flex flex-col rounded-xl border border-border/50 bg-card/60 backdrop-blur-2xl shadow-lg overflow-hidden">
@@ -88,16 +125,30 @@ export default function SummaryPanel() {
             </div>
           </div>
           
-          <Button
-            size="icon"
-            className="h-8 w-8 shrink-0 rounded-md"
-            disabled={!hasSelections}
-            onClick={() => setSaveDialogOpen(true)}
-            title="Save Configuration"
-          >
-            <Save className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 rounded-md bg-transparent border-foreground/20 text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+              disabled={!hasSelections}
+              onClick={() => setResetDialogOpen(true)}
+              title="Start Over"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-md bg-primary/15 text-primary hover:bg-primary/25 hover:text-primary"
+              disabled={!hasSelections}
+              onClick={handleSaveClick}
+              title="Save Configuration"
+            >
+              <Save className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+
         <Progress value={progressPercent} className="mt-2.5 h-1.5" />
       </div>
 
@@ -240,21 +291,78 @@ export default function SummaryPanel() {
               Give your configuration a name to access it later.
             </DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder="My Awesome PC"
-            value={buildName}
-            onChange={(e) => setBuildName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSave();
-            }}
-            autoFocus
-          />
+          <div className="relative">
+            <Input
+              placeholder="e.g., Dream Gaming Rig"
+              value={buildName}
+              maxLength={35}
+              onChange={(e) => {
+                setBuildName(e.target.value);
+                if (nameError) setNameError('');
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSave();
+              }}
+              autoFocus
+              className={nameError ? 'border-destructive' : ''}
+            />
+            {buildName.length >= 30 && (
+              <span className={`absolute bottom-2 right-3 text-[10px] font-medium ${buildName.length === 35 ? 'text-destructive' : 'text-amber-500'}`}>
+                {buildName.length}/35
+              </span>
+            )}
+          </div>
+          {nameError && (
+            <p className="text-sm text-destructive mt-1">{nameError}</p>
+          )}
           <DialogFooter>
             <Button variant="ghost" size="sm" onClick={() => setSaveDialogOpen(false)}>
               Cancel
             </Button>
             <Button size="sm" onClick={handleSave} disabled={!buildName.trim()}>
               Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Dialog */}
+      <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Start Over?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to start over? All your current component selections will be cleared and cannot be recovered.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setResetDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" size="sm" onClick={handleReset}>
+              Yes, Start Over
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Incomplete Warning Dialog */}
+      <Dialog open={incompleteWarningOpen} onOpenChange={setIncompleteWarningOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Incomplete Build</DialogTitle>
+            <DialogDescription>
+              You cannot save an incomplete build. The following components are still missing:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <ul className="space-y-1 text-sm text-amber-500">
+              {missingSteps.map(s => <li key={s} className="flex items-center gap-2"><div className="h-1.5 w-1.5 rounded-full bg-amber-500" />{STEP_LABELS[s]}</li>)}
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button size="sm" onClick={() => setIncompleteWarningOpen(false)}>
+              OK
             </Button>
           </DialogFooter>
         </DialogContent>

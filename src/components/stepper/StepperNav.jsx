@@ -82,7 +82,7 @@ export default function StepperNav() {
                 <div
                   className={cn(
                     'flex h-7 w-7 items-center justify-center rounded-md transition-colors',
-                    status === 'current' && 'bg-primary text-primary-foreground',
+                    status === 'current' && 'bg-primary/10 text-primary',
                     status === 'completed' && 'bg-secondary text-foreground',
                     status === 'warning' && 'bg-amber-400/15 text-amber-400',
                     status === 'upcoming' && 'bg-secondary/50 text-muted-foreground/50'

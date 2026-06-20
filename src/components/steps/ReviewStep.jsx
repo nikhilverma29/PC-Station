@@ -31,23 +31,53 @@ export default function ReviewStep() {
     compatibilityIssues,
     completedSteps,
     dispatch,
+    savedBuilds,
+    editingBuildId,
   } = useConfigurator();
   const { formatPrice } = useCurrency();
 
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
-  const [buildName, setBuildName] = useState('');
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [incompleteWarningOpen, setIncompleteWarningOpen] = useState(false);
+  const [buildName, setBuildName] = useState('');
+  const [nameError, setNameError] = useState('');
 
   const errors = compatibilityIssues.filter((i) => i.type === 'error');
   const warnings = compatibilityIssues.filter((i) => i.type === 'warning');
 
+  function handleSaveClick() {
+    if (completedSteps.length < STEP_ORDER.length) {
+      setIncompleteWarningOpen(true);
+      return;
+    }
+    const editBuild = editingBuildId ? savedBuilds.find(b => b.id === editingBuildId) : null;
+    setBuildName(editBuild ? editBuild.name : '');
+    setNameError('');
+    setSaveDialogOpen(true);
+  }
+
   function handleSave() {
-    if (!buildName.trim()) return;
+    const trimmedName = buildName.trim();
+    if (!trimmedName) {
+      setNameError("Please enter a valid build name");
+      return;
+    }
+
+    const isDuplicate = savedBuilds.some(b => 
+      b.name.trim().toLowerCase() === trimmedName.toLowerCase() && b.id !== editingBuildId
+    );
+    
+    if (isDuplicate) {
+      setNameError("A build with this name already exists. Please choose a different name.");
+      return;
+    }
+
     dispatch({
       type: 'SAVE_BUILD',
-      payload: { name: buildName.trim() },
+      payload: { name: trimmedName },
     });
     setBuildName('');
+    setNameError('');
     setSaveDialogOpen(false);
   }
 
@@ -194,8 +224,8 @@ export default function ReviewStep() {
         </Button>
         <Button
           size="sm"
-          onClick={() => setSaveDialogOpen(true)}
-          disabled={completedSteps.length === 0}
+          onClick={handleSaveClick}
+          disabled={completedSteps.length < STEP_ORDER.length}
           className="gap-2"
         >
           <Save className="h-3.5 w-3.5" />
@@ -212,15 +242,30 @@ export default function ReviewStep() {
               Give your build a name so you can find it later.
             </DialogDescription>
           </DialogHeader>
-          <Input
-            placeholder="e.g., Dream Gaming Rig"
-            value={buildName}
-            onChange={(e) => setBuildName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSave();
-            }}
-            autoFocus
-          />
+          <div className="relative">
+            <Input
+              placeholder="e.g., Dream Gaming Rig"
+              value={buildName}
+              maxLength={35}
+              onChange={(e) => {
+                setBuildName(e.target.value);
+                if (nameError) setNameError('');
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSave();
+              }}
+              autoFocus
+              className={nameError ? 'border-destructive' : ''}
+            />
+            {buildName.length >= 30 && (
+              <span className={`absolute bottom-2 right-3 text-[10px] font-medium ${buildName.length === 35 ? 'text-destructive' : 'text-amber-500'}`}>
+                {buildName.length}/35
+              </span>
+            )}
+          </div>
+          {nameError && (
+            <p className="text-sm text-destructive mt-1">{nameError}</p>
+          )}
           <DialogFooter>
             <Button variant="ghost" size="sm" onClick={() => setSaveDialogOpen(false)}>
               Cancel
@@ -238,15 +283,37 @@ export default function ReviewStep() {
           <DialogHeader>
             <DialogTitle>Start Over?</DialogTitle>
             <DialogDescription>
-              This will clear all your selections. Saved builds won't be affected.
+              Are you sure you want to start over? All your current component selections will be cleared and cannot be recovered.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setResetDialogOpen(false)}>
+            <Button variant="outline" size="sm" onClick={() => setResetDialogOpen(false)}>
               Cancel
             </Button>
             <Button variant="destructive" size="sm" onClick={handleReset}>
-              Reset
+              Yes, Start Over
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Incomplete Warning Dialog */}
+      <Dialog open={incompleteWarningOpen} onOpenChange={setIncompleteWarningOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Incomplete Build</DialogTitle>
+            <DialogDescription>
+              You cannot save an incomplete build. The following components are still missing:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <ul className="space-y-1 text-sm text-amber-500">
+              {STEP_ORDER.filter(s => !selections[s]).map(s => <li key={s} className="flex items-center gap-2"><div className="h-1.5 w-1.5 rounded-full bg-amber-500" />{STEP_LABELS[s]}</li>)}
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button size="sm" onClick={() => setIncompleteWarningOpen(false)}>
+              OK
             </Button>
           </DialogFooter>
         </DialogContent>

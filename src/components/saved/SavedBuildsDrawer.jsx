@@ -9,8 +9,18 @@ import {
 import { useConfigurator } from '@/hooks/useConfigurator';
 import BuildCard from './BuildCard';
 
+import { useState, useEffect } from 'react';
+
 export default function SavedBuildsDrawer({ open, onOpenChange }) {
-  const { savedBuilds } = useConfigurator();
+  const { savedBuilds, editingBuildId } = useConfigurator();
+  const [deletedActiveNotice, setDeletedActiveNotice] = useState(false);
+
+  // Clear notice when drawer is closed or another build is edited
+  useEffect(() => {
+    if (!open || editingBuildId) {
+      setDeletedActiveNotice(false);
+    }
+  }, [open, editingBuildId]);
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction="right">
@@ -33,6 +43,13 @@ export default function SavedBuildsDrawer({ open, onOpenChange }) {
         <div
           className="flex-1 p-4 overflow-y-auto overflow-x-hidden overscroll-contain max-h-[calc(100vh-80px)]"
         >
+          {deletedActiveNotice && (
+            <div className="mb-4 rounded-md bg-amber-500/10 border border-amber-500/20 p-3">
+              <p className="text-sm text-amber-500/90">
+                The active build was deleted. Your current selections remain but are no longer saved.
+              </p>
+            </div>
+          )}
           {savedBuilds.length > 0 ? (
             <div className="flex flex-col gap-4 pb-4">
               {savedBuilds.map((build) => (
@@ -40,6 +57,7 @@ export default function SavedBuildsDrawer({ open, onOpenChange }) {
                   key={build.id}
                   build={build}
                   onDrawerClose={() => onOpenChange(false)}
+                  onActiveDeleted={() => setDeletedActiveNotice(true)}
                 />
               ))}
             </div>

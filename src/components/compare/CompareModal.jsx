@@ -59,9 +59,7 @@ export default function CompareModal({ open, onOpenChange }) {
               </span>
             </div>
 
-            {savedBuilds.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic text-right">Save at least two builds to compare.</p>
-            ) : (
+            {savedBuilds.length < 2 ? null : (
               <div className="flex items-center gap-3 shrink-0 ml-auto pr-12">
                 {/* Build A dropdown */}
                 <Dropdown
@@ -107,9 +105,10 @@ export default function CompareModal({ open, onOpenChange }) {
 
                 {/* Compare button */}
                 <Button
+                  variant="ghost"
                   onClick={() => setShowTable(true)}
                   disabled={!buildAId || !buildBId || buildAId === buildBId}
-                  className="h-10 px-6 whitespace-nowrap text-base font-bold"
+                  className="h-10 px-6 whitespace-nowrap text-base font-bold bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
                 >
                   Compare Builds
                 </Button>
@@ -122,11 +121,21 @@ export default function CompareModal({ open, onOpenChange }) {
         <div
           className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain"
         >
-          {savedBuilds.length === 0 ? (
+          {savedBuilds.length < 2 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-12">
-              <GitCompare className="h-12 w-12 text-muted-foreground/20 mb-4" />
-              <p className="text-muted-foreground">No saved builds yet.</p>
-              <p className="text-xs text-muted-foreground mt-1">Save at least two builds to compare them.</p>
+              <div className="h-16 w-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+                <GitCompare className="h-8 w-8 text-muted-foreground/50" />
+              </div>
+              <p className="text-lg font-medium text-foreground">Not Enough Builds</p>
+              <p className="text-sm text-muted-foreground mt-2 max-w-md">
+                You need at least 2 saved builds to use the compare feature. Go back and save another build first.
+              </p>
+            </div>
+          ) : !showTable && buildAId === buildBId ? (
+            <div className="flex flex-col items-center justify-center h-full text-center p-12">
+              <p className="text-lg font-medium text-destructive">
+                Please select two different builds to compare
+              </p>
             </div>
           ) : showTable && buildA && buildB ? (
             <div className="p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

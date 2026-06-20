@@ -287,7 +287,7 @@ function computeSummary(buildA, buildB) {
 
 function BetterBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider text-primary shrink-0" style={{ backgroundColor: '#525253' }}>
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 shrink-0">
       Better
     </span>
   );
