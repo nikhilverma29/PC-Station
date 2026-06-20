@@ -10,6 +10,7 @@ import {
 import { cn } from '@/lib/utils';
 import { getSpecLabels, CATEGORY_IMAGES } from '@/data/products';
 import { checkProductCompatibility } from '@/data/compatibility';
+import { useCurrency } from '@/hooks/useCurrency';
 
 /**
  * ProductCard — Interactive selection card for a single component.
@@ -18,6 +19,7 @@ import { checkProductCompatibility } from '@/data/compatibility';
  * Handles selection/deselection via onClick callback.
  */
 export default function ProductCard({ product, isSelected, selections, onSelect }) {
+  const { formatPrice } = useCurrency();
   const specLabels = getSpecLabels(product.category);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -52,7 +54,7 @@ export default function ProductCard({ product, isSelected, selections, onSelect 
         'group relative cursor-pointer transition-all duration-300 ease-out backdrop-blur-xl bg-card/60 overflow-hidden p-0',
         'hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/50 hover:border-primary',
         isSelected ? 'border-primary ring-1 ring-primary bg-primary/20 shadow-md shadow-primary/10' : 'border-border/60',
-        !isSelected && !compatibility.hasErrors && 'hover:bg-primary/15',
+        !isSelected && !compatibility.hasErrors && 'hover:bg-[#7B6543]',
         compatibility.hasErrors && !isSelected && 'opacity-40 hover:opacity-60'
       )}
     >
@@ -153,7 +155,7 @@ export default function ProductCard({ product, isSelected, selections, onSelect 
           {/* Price */}
           <div className="flex items-end justify-between border-t border-border/40 pt-4 mt-2">
             <span className="text-2xl font-extrabold tabular-nums tracking-tight">
-              ${product.price.toLocaleString()}
+              {formatPrice(product.price)}
             </span>
             {isSelected && (
               <span className="text-xs text-primary font-medium">Selected</span>

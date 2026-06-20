@@ -2,9 +2,11 @@ import { cn } from '@/lib/utils';
 import { AlertTriangle, X } from 'lucide-react';
 import { useConfigurator } from '@/hooks/useConfigurator';
 import { useMemo } from 'react';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export default function SummaryItem({ category, label, item, onClick }) {
   const { compatibilityIssues } = useConfigurator();
+  const { formatPrice } = useCurrency();
 
   const issues = useMemo(() => {
     return compatibilityIssues.filter(i => i.affectedComponents.includes(category));
@@ -42,7 +44,7 @@ export default function SummaryItem({ category, label, item, onClick }) {
           "text-sm tabular-nums",
           item ? "font-semibold text-foreground" : "text-muted-foreground"
         )}>
-          {item ? `$${item.price}` : '—'}
+          {item ? formatPrice(item.price) : '—'}
         </span>
       </div>
     </div>

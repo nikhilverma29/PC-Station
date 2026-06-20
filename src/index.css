@@ -1,12 +1,20 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Saira:wght@400;700;800;900&display=swap');
+
+@font-face {
+    font-family: 'Zrnic';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Zrnic'), url('https://fonts.cdnfonts.com/s/6616/zrnic.woff') format('woff');
+}
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.145 0 0);
+  --background: #414a5a;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.178 0.004 285.938);
   --card-foreground: oklch(0.985 0 0);
@@ -96,11 +104,13 @@
     display: none;
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   body {
-    @apply font-sans antialiased text-foreground;
+    @apply font-sans antialiased bg-background text-foreground;
     min-height: 100vh;
-    background: linear-gradient(135deg, oklch(0.55 0.01 250) 0%, oklch(0.40 0.01 250) 40%, oklch(0.25 0.01 250) 100%);
-    background-attachment: fixed;
   }
 
   .no-scrollbar::-webkit-scrollbar {

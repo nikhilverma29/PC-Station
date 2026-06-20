@@ -13,9 +13,11 @@ import StepContent from '@/components/stepper/StepContent';
 import StepControls from '@/components/stepper/StepControls';
 import SummaryPanel from '@/components/summary/SummaryPanel';
 import { useConfigurator } from '@/hooks/useConfigurator';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export default function ConfiguratorLayout() {
   const { totalPrice, completedSteps } = useConfigurator();
+  const { formatPrice } = useCurrency();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   return (
@@ -48,7 +50,7 @@ export default function ConfiguratorLayout() {
               {completedSteps.length} of 7 selected
             </p>
             <p className="text-lg font-semibold tabular-nums">
-              ${totalPrice.toLocaleString()}
+              {formatPrice(totalPrice)}
             </p>
           </div>
 

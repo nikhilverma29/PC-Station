@@ -36,6 +36,7 @@ const initialState = {
   selections: { ...initialSelections },
   savedBuilds: loadSavedBuilds(),
   compareList: [],
+  currency: 'INR',
 };
 
 function configuratorReducer(state, action) {
@@ -119,6 +120,12 @@ function configuratorReducer(state, action) {
         ...state,
         currentStep: 0,
         selections: { ...initialSelections },
+      };
+
+    case 'SET_CURRENCY':
+      return {
+        ...state,
+        currency: action.payload,
       };
 
     default:

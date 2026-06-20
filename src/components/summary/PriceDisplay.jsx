@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useCurrency } from '@/hooks/useCurrency';
 
 export default function PriceDisplay({ value }) {
   const [displayValue, setDisplayValue] = useState(value);
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     // Simple fast count up/down animation
@@ -28,7 +30,7 @@ export default function PriceDisplay({ value }) {
 
   return (
     <span className="text-2xl font-bold tracking-tight tabular-nums text-primary">
-      ${Math.round(displayValue).toLocaleString()}
+      {formatPrice(displayValue)}
     </span>
   );
 }

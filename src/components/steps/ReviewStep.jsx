@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useConfigurator } from '@/hooks/useConfigurator';
+import { useCurrency } from '@/hooks/useCurrency';
 import { STEP_ORDER, STEP_LABELS, getSpecLabels, CATEGORY_IMAGES } from '@/data/products';
 import { cn } from '@/lib/utils';
 
@@ -31,6 +32,7 @@ export default function ReviewStep() {
     completedSteps,
     dispatch,
   } = useConfigurator();
+  const { formatPrice } = useCurrency();
 
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [buildName, setBuildName] = useState('');
@@ -147,7 +149,7 @@ export default function ReviewStep() {
                 <div className="sm:ml-4 sm:text-right mt-2 sm:mt-0 w-full sm:w-auto flex sm:block justify-between items-center">
                   {item ? (
                     <span className="text-xl font-bold tabular-nums">
-                      ${item.price.toLocaleString()}
+                      {formatPrice(item.price)}
                     </span>
                   ) : (
                     <button
@@ -175,7 +177,7 @@ export default function ReviewStep() {
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground">Estimated Total</span>
         <span className="text-2xl font-bold tabular-nums">
-          ${totalPrice.toLocaleString()}
+          {formatPrice(totalPrice)}
         </span>
       </div>
 

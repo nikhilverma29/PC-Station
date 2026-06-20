@@ -6,7 +6,6 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from '@/components/ui/drawer';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useConfigurator } from '@/hooks/useConfigurator';
 import BuildCard from './BuildCard';
 
@@ -15,24 +14,37 @@ export default function SavedBuildsDrawer({ open, onOpenChange }) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction="right">
-      <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 w-full sm:w-[400px] rounded-none">
-        <DrawerHeader className="border-b border-border/50 bg-muted/10">
-          <DrawerTitle className="flex items-center gap-2">
-            <Save className="h-5 w-5 text-primary" />
+      <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 w-full sm:w-[400px] rounded-none flex flex-col overflow-hidden">
+        {/* Fixed header — does not scroll */}
+        <DrawerHeader className="flex-shrink-0 border-b border-border/50 bg-muted/10">
+          <DrawerTitle 
+            className="flex items-center gap-2 text-2xl tracking-[0.02em]"
+            style={{ fontFamily: '"Zrnic", sans-serif' }}
+          >
+            <Save className="h-6 w-6 text-primary" />
             Saved Builds
           </DrawerTitle>
           <DrawerDescription>
             View and load your previously saved configurations.
           </DrawerDescription>
         </DrawerHeader>
-        
-        <ScrollArea className="flex-1 p-4">
+
+        {/* Scrollable build list — explicit overflow-y: auto with max-height */}
+        <div
+          className="flex-1 p-4"
+          style={{
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            overscrollBehavior: 'contain',
+            maxHeight: 'calc(100vh - 80px)',
+          }}
+        >
           {savedBuilds.length > 0 ? (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 pb-4">
               {savedBuilds.map((build) => (
-                <BuildCard 
-                  key={build.id} 
-                  build={build} 
+                <BuildCard
+                  key={build.id}
+                  build={build}
                   onDrawerClose={() => onOpenChange(false)}
                 />
               ))}
@@ -48,7 +60,7 @@ export default function SavedBuildsDrawer({ open, onOpenChange }) {
               </p>
             </div>
           )}
-        </ScrollArea>
+        </div>
       </DrawerContent>
     </Drawer>
   );
