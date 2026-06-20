@@ -46,6 +46,10 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.30 0.006 285.885);
   --sidebar-ring: oklch(0.769 0.163 70.08);
+  --table-header-bg: #141416;
+  --table-row-bg: #1F1F22;
+  --text-muted-alt: #a0a8b8;
+  --text-light: #c8d0e0;
 }
 
 @theme inline {
@@ -84,6 +88,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-table-header-bg: var(--table-header-bg);
+  --color-table-row-bg: var(--table-row-bg);
+  --color-text-muted-alt: var(--text-muted-alt);
+  --color-text-light: var(--text-light);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);

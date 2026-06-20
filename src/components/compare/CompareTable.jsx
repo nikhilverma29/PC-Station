@@ -311,9 +311,9 @@ export default function CompareTable({ buildA, buildB }) {
     return (
       <div className="mt-1.5 flex flex-col gap-0.5">
         {entries.map(([key, value]) => (
-          <div key={key} className="flex gap-1 text-[13px]" style={{ color: '#a0a8b8' }}>
+          <div key={key} className="flex gap-1 text-[13px] text-text-muted-alt">
             <span className="shrink-0">{labels[key]}:</span>
-            <span className="font-medium" style={{ color: '#c8d0e0' }}>{value}</span>
+            <span className="font-medium text-text-light">{value}</span>
           </div>
         ))}
       </div>
@@ -327,11 +327,8 @@ export default function CompareTable({ buildA, buildB }) {
       <div className="overflow-x-auto rounded-md border border-black">
 
         {/* Column header */}
-        <div
-          className="grid border-b-2 border-black"
-          style={{ gridTemplateColumns: '20% 40% 40%', backgroundColor: '#141416' }}
-        >
-          <div className="px-5 py-3 border-l-4 border-l-primary bg-[#141416]">
+        <div className="grid border-b-2 border-black bg-table-header-bg" style={{ gridTemplateColumns: '20% 40% 40%' }}>
+          <div className="px-5 py-3 border-l-4 border-l-primary bg-table-header-bg">
             <span className="text-base font-bold uppercase tracking-widest text-muted-foreground">Component</span>
           </div>
           <div className="px-5 py-3 border-l border-black flex items-center gap-2">
@@ -351,34 +348,25 @@ export default function CompareTable({ buildA, buildB }) {
           return (
             <div
               key={cat}
-              className="grid border-b border-black"
-              style={{ gridTemplateColumns: '20% 40% 40%', backgroundColor: '#1F1F22' }}
+              className="grid border-b border-black bg-table-row-bg"
+              style={{ gridTemplateColumns: '20% 40% 40%' }}
             >
               {/* Category label */}
-              <div
-                className="px-5 py-4 flex items-start border-r border-black border-l-4 bg-[#141416]"
-                style={{ borderLeftColor: 'var(--primary)' }}
-              >
-                <span
-                  className="text-base font-bold uppercase tracking-widest leading-tight"
-                  style={{ color: 'var(--primary)' }}
-                >
+              <div className="px-5 py-4 flex items-start border-r border-black border-l-4 border-l-primary bg-table-header-bg">
+                <span className="text-base font-bold uppercase tracking-widest leading-tight text-primary">
                   {STEP_LABELS[cat]}
                 </span>
               </div>
 
               {/* Build A */}
-              <div
-                className="px-5 py-4 border-r border-black"
-                style={better === 'A' ? { backgroundColor: '#1C2F2B' } : undefined}
-              >
+              <div className={cn("px-5 py-4 border-r border-black", better === 'A' && "bg-[#1C2F2B]")}>
                 {itemA ? (
                   <div>
                     <div className="flex justify-between items-center gap-2 mb-1">
                       <span className="font-bold text-lg text-white leading-snug">{itemA.name}</span>
                       {better === 'A' && <BetterBadge />}
                     </div>
-                    <div className="text-[15px] font-semibold" style={{ color: 'var(--primary)' }}>
+                    <div className="text-[15px] font-semibold text-primary">
                       {formatPrice(itemA.price)}
                     </div>
                     {renderSpecs(itemA)}
@@ -389,17 +377,14 @@ export default function CompareTable({ buildA, buildB }) {
               </div>
 
               {/* Build B */}
-              <div
-                className="px-5 py-4"
-                style={better === 'B' ? { backgroundColor: '#1C2F2B' } : undefined}
-              >
+              <div className={cn("px-5 py-4", better === 'B' && "bg-[#1C2F2B]")}>
                 {itemB ? (
                   <div>
                     <div className="flex justify-between items-center gap-2 mb-1">
                       <span className="font-bold text-lg text-white leading-snug">{itemB.name}</span>
                       {better === 'B' && <BetterBadge />}
                     </div>
-                    <div className="text-[15px] font-semibold" style={{ color: 'var(--primary)' }}>
+                    <div className="text-[15px] font-semibold text-primary">
                       {formatPrice(itemB.price)}
                     </div>
                     {renderSpecs(itemB)}
@@ -413,18 +398,12 @@ export default function CompareTable({ buildA, buildB }) {
         })}
 
         {/* Total Price row */}
-        <div
-          className="grid border-t-2 border-black"
-          style={{ gridTemplateColumns: '20% 40% 40%', backgroundColor: '#1F1F22' }}
-        >
-          <div
-            className="px-5 py-5 flex items-center border-r border-black border-l-4 bg-[#141416]"
-            style={{ borderLeftColor: 'var(--primary)' }}
-          >
+        <div className="grid border-t-2 border-black bg-table-row-bg" style={{ gridTemplateColumns: '20% 40% 40%' }}>
+          <div className="px-5 py-5 flex items-center border-r border-black border-l-4 border-l-primary bg-table-header-bg">
             <span className="text-base font-bold uppercase tracking-widest text-white">Total Price</span>
           </div>
           <div className={cn('px-5 py-5 border-r border-black', isACheaper && 'bg-emerald-500/10')}>
-            <div className="text-3xl font-extrabold tabular-nums" style={{ color: 'var(--primary)' }}>
+            <div className="text-3xl font-extrabold tabular-nums text-primary">
               {formatPrice(buildA.totalPrice)}
             </div>
             {isACheaper && (
@@ -434,7 +413,7 @@ export default function CompareTable({ buildA, buildB }) {
             )}
           </div>
           <div className={cn('px-5 py-5', isBCheaper && 'bg-emerald-500/10')}>
-            <div className="text-3xl font-extrabold tabular-nums" style={{ color: 'var(--primary)' }}>
+            <div className="text-3xl font-extrabold tabular-nums text-primary">
               {formatPrice(buildB.totalPrice)}
             </div>
             {isBCheaper && (
@@ -456,15 +435,14 @@ export default function CompareTable({ buildA, buildB }) {
           {summary.categories.map((cat) => (
             <div
               key={cat.label}
-              className="rounded-xl border border-border/60 p-4 flex flex-col gap-2"
-              style={{ background: 'oklch(0.18 0.004 285)' }}
+              className="rounded-xl border border-border/60 p-4 flex flex-col gap-2 bg-table-row-bg"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm sm:text-base font-bold uppercase tracking-wider" style={{ color: 'var(--primary)' }}>
+                <span className="text-sm sm:text-base font-bold uppercase tracking-wider text-primary">
                   {cat.label}
                 </span>
               </div>
-              <p className="text-base leading-relaxed" style={{ color: '#ffffff' }}>
+              <p className="text-base leading-relaxed text-white">
                 {cat.reason}
               </p>
             </div>

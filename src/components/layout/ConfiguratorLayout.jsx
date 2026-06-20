@@ -36,7 +36,7 @@ export default function ConfiguratorLayout() {
 
         {/* Sticky summary panel — desktop only */}
         <aside className="hidden w-80 lg:w-[380px] shrink-0 lg:block mt-6 relative right-4 lg:right-6 xl:right-8">
-          <div className="sticky top-6" style={{maxHeight: 'calc(100vh - 4rem)', overflowY: 'auto'}}>
+          <div className="sticky top-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
             <SummaryPanel />
           </div>
         </aside>

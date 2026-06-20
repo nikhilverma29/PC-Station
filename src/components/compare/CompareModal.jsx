@@ -40,8 +40,7 @@ export default function CompareModal({ open, onOpenChange }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="flex flex-col p-0 gap-0 bg-[#0f0f11] backdrop-blur-xl border-border/60 sm:rounded-3xl overflow-hidden"
-        style={{ minWidth: '85vw', width: '90vw', minHeight: '80vh', height: '85vh' }}
+        className="flex flex-col p-0 gap-0 bg-[#0f0f11] backdrop-blur-xl border-border/60 sm:rounded-3xl overflow-hidden min-w-[85vw] w-[90vw] min-h-[80vh] h-[85vh]"
       >
         <DialogClose className="absolute top-5 right-5 z-50 p-2 outline-none border-none hover:bg-transparent">
           <XIcon className="h-8 w-8 text-red-500" />
@@ -121,8 +120,7 @@ export default function CompareModal({ open, onOpenChange }) {
 
         {/* ── Scrollable table area ── */}
         <div
-          className="flex-1"
-          style={{ overflowY: 'auto', overflowX: 'hidden', overscrollBehavior: 'contain' }}
+          className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain"
         >
           {savedBuilds.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-12">

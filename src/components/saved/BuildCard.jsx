@@ -40,13 +40,11 @@ export default function BuildCard({ build, onDrawerClose }) {
       overflow-visible ensures the border is NOT clipped during scale.
     */
     <div
-      className="transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl"
-      style={{ overflow: 'visible' }}
+      className="transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl overflow-visible"
     >
       {/* Inner card: border-primary always visible, overflow-hidden only clips inner content not the border */}
       <div
-        className="rounded-xl border border-primary overflow-hidden"
-        style={{ backgroundColor: 'var(--card)' }}
+        className="rounded-xl border border-primary overflow-hidden bg-card"
       >
         {/* Card header */}
         <div className="flex items-center justify-between bg-muted/40 px-4 py-3 border-b border-border/50">

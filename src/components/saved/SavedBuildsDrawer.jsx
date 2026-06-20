@@ -31,13 +31,7 @@ export default function SavedBuildsDrawer({ open, onOpenChange }) {
 
         {/* Scrollable build list — explicit overflow-y: auto with max-height */}
         <div
-          className="flex-1 p-4"
-          style={{
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            overscrollBehavior: 'contain',
-            maxHeight: 'calc(100vh - 80px)',
-          }}
+          className="flex-1 p-4 overflow-y-auto overflow-x-hidden overscroll-contain max-h-[calc(100vh-80px)]"
         >
           {savedBuilds.length > 0 ? (
             <div className="flex flex-col gap-4 pb-4">
