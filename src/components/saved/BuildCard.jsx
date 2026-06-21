@@ -63,14 +63,14 @@ export default function BuildCard({ build, onDrawerClose, onActiveDeleted }) {
       overflow-visible ensures the border is NOT clipped during scale.
     */
     <div
-      className="transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl overflow-visible"
+      className="transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl overflow-visible group"
     >
-      {/* Inner card: border-primary always visible, overflow-hidden only clips inner content not the border */}
+      {/* Inner card: much brighter border that thickens on hover */}
       <div
-        className="rounded-xl border border-primary overflow-hidden bg-card"
+        className="rounded-xl border border-[#5a3f18] group-hover:border-[3px] group-hover:border-[#6b4d20] overflow-hidden bg-black transition-all duration-300"
       >
         {/* Card header */}
-        <div className="flex items-center justify-between bg-muted/40 px-4 py-3 border-b border-border/50">
+        <div className="flex items-center justify-between bg-black px-4 py-3 border-b border-border/50">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background border border-border">
               <Monitor className="h-4 w-4 text-primary" />
@@ -102,7 +102,7 @@ export default function BuildCard({ build, onDrawerClose, onActiveDeleted }) {
         </div>
 
         {/* Footer actions */}
-        <div className="bg-muted/20 px-4 py-2 border-t border-border/50 flex items-center justify-between">
+        <div className="bg-black px-4 py-2 border-t border-border/50 flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
@@ -118,11 +118,20 @@ export default function BuildCard({ build, onDrawerClose, onActiveDeleted }) {
             <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteConfirmOpen(true)}>
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="secondary" size="sm" className="h-7 px-3 text-xs gap-1.5" onClick={() => setEditConfirmOpen(true)}>
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="h-6 px-3 text-xs gap-1.5 bg-black border border-gray-600 hover:bg-black/90" 
+              onClick={() => setEditConfirmOpen(true)}
+            >
               <Edit2 className="h-3 w-3" />
               Edit
             </Button>
-            <Button size="sm" className="h-7 px-3 text-xs gap-1.5" onClick={() => setLoadConfirmOpen(true)}>
+            <Button 
+              size="sm" 
+              className="h-6 px-3 text-xs gap-1.5 bg-[#181002] text-[#C47F10] hover:bg-[#181002]/90" 
+              onClick={() => setLoadConfirmOpen(true)}
+            >
               <Download className="h-3 w-3" />
               Load
             </Button>

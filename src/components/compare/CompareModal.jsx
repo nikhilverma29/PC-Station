@@ -12,7 +12,7 @@ import { useConfigurator } from '@/hooks/useConfigurator';
 import Dropdown from '@/components/ui/dropdown';
 
 const SELECT_CLS =
-  'h-10 rounded-md border border-primary px-3 py-2 text-sm text-foreground focus:outline-none w-56 [&_svg]:text-primary [&_svg]:opacity-100';
+  'h-10 rounded-md bg-black border-t-[2px] border-l-[2px] border-r-[2px] border-b-0 border-white px-3 py-2 text-base text-white font-bold focus:outline-none w-56 [&_svg]:text-white [&_svg]:opacity-100';
 
 export default function CompareModal({ open, onOpenChange }) {
   const { savedBuilds } = useConfigurator();
@@ -40,13 +40,13 @@ export default function CompareModal({ open, onOpenChange }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="flex flex-col p-0 gap-0 bg-[#0f0f11] backdrop-blur-xl border-border/60 sm:rounded-3xl overflow-hidden min-w-[85vw] w-[90vw] min-h-[80vh] h-[85vh]"
+        className="flex flex-col p-0 gap-0 bg-black border-white/10 sm:rounded-3xl overflow-hidden min-w-[85vw] w-[90vw] min-h-[80vh] h-[85vh]"
       >
         <DialogClose className="absolute top-5 right-5 z-50 p-2 outline-none border-none hover:bg-transparent">
           <XIcon className="h-8 w-8 text-red-500" />
         </DialogClose>
         {/* ── Fixed top bar: title + dropdowns + button on one line ── */}
-        <div className="flex-shrink-0 border-b border-border/50 bg-card/60 px-6 py-4">
+        <div className="flex-shrink-0 border-b border-white/[0.06] bg-black px-6 py-4">
           <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
             {/* Title (Far Left) */}
             <div className="flex items-center gap-2 shrink-0">
@@ -70,7 +70,8 @@ export default function CompareModal({ open, onOpenChange }) {
                     const ds = `[${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}]`;
                     return { 
                       value: b.id, 
-                      label: (
+                      label: b.name,
+                      displayLabel: (
                         <span className="flex items-center gap-2">
                           <span className="truncate">{b.name}</span>
                           <span className="text-white/40 text-xs shrink-0">{ds}</span>
@@ -91,7 +92,8 @@ export default function CompareModal({ open, onOpenChange }) {
                     const ds = `[${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}]`;
                     return { 
                       value: b.id, 
-                      label: (
+                      label: b.name,
+                      displayLabel: (
                         <span className="flex items-center gap-2">
                           <span className="truncate">{b.name}</span>
                           <span className="text-white/40 text-xs shrink-0">{ds}</span>
@@ -123,11 +125,11 @@ export default function CompareModal({ open, onOpenChange }) {
         >
           {savedBuilds.length < 2 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-12">
-              <div className="h-16 w-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-                <GitCompare className="h-8 w-8 text-muted-foreground/50" />
+              <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                <GitCompare className="h-8 w-8 text-white/20" />
               </div>
-              <p className="text-lg font-medium text-foreground">Not Enough Builds</p>
-              <p className="text-sm text-muted-foreground mt-2 max-w-md">
+              <p className="text-lg font-medium text-white">Not Enough Builds</p>
+              <p className="text-sm text-white/50 mt-2 max-w-md">
                 You need at least 2 saved builds to use the compare feature. Go back and save another build first.
               </p>
             </div>
@@ -143,8 +145,8 @@ export default function CompareModal({ open, onOpenChange }) {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center p-12">
-              <GitCompare className="h-12 w-12 text-muted-foreground/20 mb-4" />
-              <p className="text-muted-foreground">Select two builds above and click Compare Builds.</p>
+              <GitCompare className="h-12 w-12 text-white/10 mb-4" />
+              <p className="text-white/50">Select two builds above and click Compare Builds.</p>
             </div>
           )}
         </div>

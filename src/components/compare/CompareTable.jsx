@@ -287,7 +287,7 @@ function computeSummary(buildA, buildB) {
 
 function BetterBadge() {
   return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 shrink-0">
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 shrink-0">
       Better
     </span>
   );
@@ -311,9 +311,9 @@ export default function CompareTable({ buildA, buildB }) {
     return (
       <div className="mt-1.5 flex flex-col gap-0.5">
         {entries.map(([key, value]) => (
-          <div key={key} className="flex gap-1 text-[13px] text-text-muted-alt">
+          <div key={key} className="flex gap-1 text-[13px] text-white/50">
             <span className="shrink-0">{labels[key]}:</span>
-            <span className="font-medium text-text-light">{value}</span>
+            <span className="font-medium text-white/90">{value}</span>
           </div>
         ))}
       </div>
@@ -324,17 +324,17 @@ export default function CompareTable({ buildA, buildB }) {
     <div className="w-full flex flex-col gap-6">
 
       {/* ── Component Table ─────────────────────────────────────────────────── */}
-      <div className="overflow-x-auto rounded-md border border-black">
+      <div className="overflow-x-auto rounded-md border border-white/10">
 
         {/* Column header */}
-        <div className="grid border-b-2 border-black bg-table-header-bg" style={{ gridTemplateColumns: '20% 40% 40%' }}>
-          <div className="px-5 py-3 border-l-4 border-l-primary bg-table-header-bg">
-            <span className="text-base font-bold uppercase tracking-widest text-muted-foreground">Component</span>
+        <div className="grid border-b border-white/10 bg-black" style={{ gridTemplateColumns: '20% 40% 40%' }}>
+          <div className="px-5 py-3 border-l-4 border-l-primary bg-black">
+            <span className="text-base font-bold uppercase tracking-widest text-white/50">Component</span>
           </div>
-          <div className="px-5 py-3 border-l border-black flex items-center gap-2">
+          <div className="px-5 py-3 border-l border-white/10 flex items-center gap-2">
             <span className="text-lg font-bold text-white">{buildA.name}</span>
           </div>
-          <div className="px-5 py-3 border-l border-black flex items-center gap-2">
+          <div className="px-5 py-3 border-l border-white/10 flex items-center gap-2">
             <span className="text-lg font-bold text-white">{buildB.name}</span>
           </div>
         </div>
@@ -348,18 +348,18 @@ export default function CompareTable({ buildA, buildB }) {
           return (
             <div
               key={cat}
-              className="grid border-b border-black bg-table-row-bg"
+              className="grid border-b border-white/10 bg-transparent"
               style={{ gridTemplateColumns: '20% 40% 40%' }}
             >
               {/* Category label */}
-              <div className="px-5 py-4 flex items-start border-r border-black border-l-4 border-l-primary bg-table-header-bg">
+              <div className="px-5 py-4 flex items-start border-r border-white/10 border-l-4 border-l-primary bg-black">
                 <span className="text-base font-bold uppercase tracking-widest leading-tight text-primary">
                   {STEP_LABELS[cat]}
                 </span>
               </div>
 
               {/* Build A */}
-              <div className={cn("px-5 py-4 border-r border-black", better === 'A' && "bg-[#1C2F2B]")}>
+              <div className={cn("px-5 py-4 border-r border-white/10", better === 'A' && "bg-emerald-500/10")}>
                 {itemA ? (
                   <div>
                     <div className="flex justify-between items-center gap-2 mb-1">
@@ -372,12 +372,12 @@ export default function CompareTable({ buildA, buildB }) {
                     {renderSpecs(itemA)}
                   </div>
                 ) : (
-                  <span className="text-sm text-muted-foreground italic">—</span>
+                  <span className="text-sm text-white/30 italic">—</span>
                 )}
               </div>
 
               {/* Build B */}
-              <div className={cn("px-5 py-4", better === 'B' && "bg-[#1C2F2B]")}>
+              <div className={cn("px-5 py-4", better === 'B' && "bg-emerald-500/10")}>
                 {itemB ? (
                   <div>
                     <div className="flex justify-between items-center gap-2 mb-1">
@@ -390,7 +390,7 @@ export default function CompareTable({ buildA, buildB }) {
                     {renderSpecs(itemB)}
                   </div>
                 ) : (
-                  <span className="text-[15px] text-muted-foreground italic">—</span>
+                  <span className="text-[15px] text-white/30 italic">—</span>
                 )}
               </div>
             </div>
@@ -398,11 +398,11 @@ export default function CompareTable({ buildA, buildB }) {
         })}
 
         {/* Total Price row */}
-        <div className="grid border-t-2 border-black bg-table-row-bg" style={{ gridTemplateColumns: '20% 40% 40%' }}>
-          <div className="px-5 py-5 flex items-center border-r border-black border-l-4 border-l-primary bg-table-header-bg">
+        <div className="grid border-t border-white/10 bg-transparent" style={{ gridTemplateColumns: '20% 40% 40%' }}>
+          <div className="px-5 py-5 flex items-center border-r border-white/10 border-l-4 border-l-primary bg-black">
             <span className="text-base font-bold uppercase tracking-widest text-white">Total Price</span>
           </div>
-          <div className={cn('px-5 py-5 border-r border-black', isACheaper && 'bg-emerald-500/10')}>
+          <div className={cn('px-5 py-5 border-r border-white/10', isACheaper && 'bg-emerald-500/10')}>
             <div className="text-3xl font-extrabold tabular-nums text-primary">
               {formatPrice(buildA.totalPrice)}
             </div>
@@ -435,7 +435,7 @@ export default function CompareTable({ buildA, buildB }) {
           {summary.categories.map((cat) => (
             <div
               key={cat.label}
-              className="rounded-xl border border-border/60 p-4 flex flex-col gap-2 bg-table-row-bg"
+              className="rounded-xl border border-white/10 p-4 flex flex-col gap-2 bg-transparent"
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="text-sm sm:text-base font-bold uppercase tracking-wider text-primary">

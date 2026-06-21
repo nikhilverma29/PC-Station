@@ -24,9 +24,9 @@ export default function SavedBuildsDrawer({ open, onOpenChange }) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction="right">
-      <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 w-full sm:w-[400px] rounded-none flex flex-col overflow-hidden">
+      <DrawerContent className="h-screen top-0 right-0 left-auto mt-0 w-full sm:w-[400px] rounded-none flex flex-col overflow-hidden bg-black">
         {/* Fixed header — does not scroll */}
-        <DrawerHeader className="flex-shrink-0 border-b border-border/50 bg-muted/10">
+        <DrawerHeader className="flex-shrink-0 border-b border-border/50 bg-black">
           <DrawerTitle 
             className="flex items-center gap-2 text-2xl tracking-[0.02em]"
             style={{ fontFamily: '"Zrnic", sans-serif' }}

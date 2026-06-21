@@ -32,20 +32,21 @@ export default function Dropdown({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'flex items-center justify-between gap-2 rounded-md border border-input bg-card/60 px-3 py-1.5 text-sm font-medium text-white shadow-sm focus:outline-none cursor-pointer',
+          'flex items-center justify-between rounded-md border border-input bg-card/60 px-3 py-1.5 text-sm font-medium text-white shadow-sm focus:outline-none cursor-pointer',
           className
         )}
       >
         <span className="truncate">{displayLabel}</span>
-        <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
+        <ChevronDown className="h-4 w-4 shrink-0 text-current" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-1 w-max min-w-full rounded-md border border-border bg-[#1F1F22] shadow-xl py-1 overflow-hidden">
+        <div className="absolute right-0 top-full z-50 mt-1 w-max min-w-full rounded-md border border-input bg-black shadow-xl py-1 overflow-hidden">
           <ul className="flex flex-col max-h-[50vh] overflow-y-auto no-scrollbar">
             {options.map((opt) => {
               if (opt.disabled) return null;
               const isSelected = value === opt.value;
+              const itemLabel = opt.displayLabel || opt.label;
               
               return (
                 <li key={opt.value}>
@@ -62,7 +63,7 @@ export default function Dropdown({
                       setIsOpen(false);
                     }}
                   >
-                    {opt.label}
+                    {itemLabel}
                   </button>
                 </li>
               );

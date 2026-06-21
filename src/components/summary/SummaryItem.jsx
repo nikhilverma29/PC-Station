@@ -24,7 +24,7 @@ export default function SummaryItem({ category, label, item, onClick }) {
       onClick={onClick}
     >
       <div className="flex flex-col min-w-0 pr-4">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80 mb-0.5">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-white mb-0.5">
           {label}
         </span>
         <div className="flex items-center gap-1.5">

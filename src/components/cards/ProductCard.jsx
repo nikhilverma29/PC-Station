@@ -18,7 +18,7 @@ import { useCurrency } from '@/hooks/useCurrency';
  * Shows product image, name, brand, specs, price, and compatibility status.
  * Handles selection/deselection via onClick callback.
  */
-export default function ProductCard({ product, isSelected, selections, onSelect }) {
+export default function ProductCard({ product, isSelected, selections, onSelect, onLearnMore }) {
   const { formatPrice } = useCurrency();
   const specLabels = getSpecLabels(product.category);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -31,6 +31,9 @@ export default function ProductCard({ product, isSelected, selections, onSelect 
 
   const specsToShow = Object.entries(specLabels).slice(0, 4);
   const categoryImage = CATEGORY_IMAGES[product.category];
+  
+  // Use product-specific image if available, otherwise fallback to category image
+  const productImage = product.image || categoryImage;
 
   function formatSpecValue(key, value) {
     if (key === 'wattage') return `${value}W`;
@@ -51,26 +54,25 @@ export default function ProductCard({ product, isSelected, selections, onSelect 
         }
       }}
       className={cn(
-        'group relative cursor-pointer transition-all duration-300 ease-out backdrop-blur-xl bg-card/60 overflow-hidden p-0',
-        'hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/50 hover:border-primary',
+        'group relative cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] backdrop-blur-xl bg-card/60 overflow-hidden p-0',
+        'hover:-translate-y-2 hover:scale-[1.06] hover:shadow-2xl hover:shadow-black/50 hover:border-primary',
         isSelected ? 'border-primary ring-1 ring-primary bg-primary/20 shadow-md shadow-primary/10' : 'border-border/60',
-        !isSelected && !compatibility.hasErrors && 'hover:bg-[#7B6543]',
         compatibility.hasErrors && !isSelected && 'opacity-40 hover:opacity-60'
       )}
     >
       <CardContent className="p-0">
         {/* Product image area (Always rendered to maintain consistent card height) */}
-        <div className="relative h-44 w-full overflow-hidden rounded-t-xl bg-muted/20 flex items-center justify-center">
-          {categoryImage && !imageError ? (
+        <div className="relative h-44 w-full overflow-visible rounded-t-xl bg-muted/20 flex items-center justify-center">
+          {productImage && !imageError ? (
             <img
-              src={categoryImage}
+              src={productImage}
               alt=""
               loading="lazy"
               onLoad={() => setImageLoaded(true)}
               onError={() => setImageError(true)}
               className={cn(
-                'h-full w-full object-cover transition-all duration-700 ease-out',
-                'opacity-70 group-hover:opacity-100 group-hover:scale-105',
+                'h-full w-full object-cover transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]',
+                'opacity-100 group-hover:scale-[1.15] group-hover:-translate-y-5',
                 isSelected && 'opacity-90',
                 !imageLoaded && 'opacity-0'
               )}
@@ -83,9 +85,6 @@ export default function ProductCard({ product, isSelected, selections, onSelect 
               <span className="text-[10px] mt-1">Image Unavailable</span>
             </div>
           )}
-          
-          {/* Gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
 
           {/* Status indicator — positioned over image */}
           <div className="absolute top-2.5 right-2.5">
@@ -120,7 +119,10 @@ export default function ProductCard({ product, isSelected, selections, onSelect 
         </div>
 
         {/* Card body */}
-        <div className="p-4 pt-3">
+        <div className={cn(
+          "p-4 pt-3 transition-colors duration-500",
+          !isSelected && !compatibility.hasErrors && 'group-hover:bg-[#312004]'
+        )}>
           {/* Brand + badges row */}
           <div className="mb-2.5 flex items-center gap-1.5">
             <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0">
@@ -157,9 +159,24 @@ export default function ProductCard({ product, isSelected, selections, onSelect 
             <span className="text-2xl font-extrabold tabular-nums tracking-tight">
               {formatPrice(product.price)}
             </span>
-            {isSelected && (
-              <span className="text-xs text-primary font-medium">Selected</span>
-            )}
+            <div className="flex items-center gap-3">
+              {isSelected && (
+                <span className="text-xs text-primary font-medium">Selected</span>
+              )}
+              {onLearnMore && (
+                <span
+                  role="button"
+                  tabIndex={-1}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onLearnMore(product);
+                  }}
+                  className="text-xs text-muted-foreground/70 hover:!text-primary transition-colors duration-300 cursor-pointer select-none"
+                >
+                  Learn More →
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

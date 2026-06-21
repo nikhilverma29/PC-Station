@@ -81,11 +81,11 @@ export default function StepperNav() {
               >
                 <div
                   className={cn(
-                    'flex h-7 w-7 items-center justify-center rounded-md transition-colors',
-                    status === 'current' && 'bg-primary/10 text-primary',
-                    status === 'completed' && 'bg-secondary text-foreground',
-                    status === 'warning' && 'bg-amber-400/15 text-amber-400',
-                    status === 'upcoming' && 'bg-secondary/50 text-muted-foreground/50'
+                    'flex h-7 w-7 items-center justify-center rounded-md transition-colors border-t border-l border-r border-b-0 border-white',
+                    status === 'current' && 'bg-black text-white',
+                    status === 'completed' && 'bg-black text-white',
+                    status === 'warning' && 'bg-black text-white',
+                    status === 'upcoming' && 'bg-black text-white'
                   )}
                 >
                   {status === 'completed' ? (

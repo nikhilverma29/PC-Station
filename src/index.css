@@ -1,7 +1,7 @@
-@import "tailwindcss";
-@import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Saira:wght@400;700;800;900&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @font-face {
     font-family: 'Zrnic';
@@ -14,7 +14,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #414a5a;
+  --background: #000000;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.178 0.004 285.938);
   --card-foreground: oklch(0.985 0 0);

@@ -51,18 +51,18 @@ export default function SummaryPanel() {
   // Determine build status
   const buildStatus = useMemo(() => {
     if (errors.length > 0) {
-      return { label: 'Compatibility Issues Detected', color: 'text-destructive', icon: ShieldAlert, bg: 'bg-destructive/10' };
+      return { label: 'Compatibility Issues Detected', color: 'text-destructive', icon: ShieldAlert, bg: 'bg-black' };
     }
     if (warnings.length > 0 && isComplete) {
-      return { label: 'Review Warnings Before Saving', color: 'text-amber-400', icon: AlertTriangle, bg: 'bg-amber-400/10' };
+      return { label: 'Review Warnings Before Saving', color: 'text-amber-400', icon: AlertTriangle, bg: 'bg-black' };
     }
     if (isComplete) {
-      return { label: 'Ready For Review', color: 'text-emerald-400', icon: CircleCheck, bg: 'bg-emerald-400/10' };
+      return { label: 'Ready For Review', color: 'text-emerald-400', icon: CircleCheck, bg: 'bg-black' };
     }
     if (hasSelections) {
-      return { label: 'Build In Progress', color: 'text-muted-foreground', icon: Loader2, bg: 'bg-muted/30' };
+      return { label: 'Build In Progress', color: 'text-muted-foreground', icon: Loader2, bg: 'bg-black' };
     }
-    return { label: 'Select Components To Begin', color: 'text-muted-foreground/60', icon: null, bg: 'bg-muted/20' };
+    return { label: 'Select Components To Begin', color: 'text-muted-foreground/60', icon: null, bg: 'bg-black' };
   }, [errors.length, warnings.length, isComplete, hasSelections]);
 
   function handleSaveClick() {
@@ -82,11 +82,11 @@ export default function SummaryPanel() {
       setNameError("Please enter a valid build name");
       return;
     }
-    
-    const isDuplicate = savedBuilds.some(b => 
+
+    const isDuplicate = savedBuilds.some(b =>
       b.name.trim().toLowerCase() === trimmedName.toLowerCase() && b.id !== editingBuildId
     );
-    
+
     if (isDuplicate) {
       setNameError("A build with this name already exists. Please choose a different name.");
       return;
@@ -106,7 +106,10 @@ export default function SummaryPanel() {
   const missingSteps = STEP_ORDER.filter(s => !selections[s]);
 
   return (
-    <div className="flex flex-col rounded-xl border border-border/50 bg-card/60 backdrop-blur-2xl shadow-lg overflow-hidden">
+    <div className="relative flex flex-col rounded-xl bg-black shadow-2xl shadow-black/80 overflow-hidden">
+      {/* Partial Corner Borders */}
+      <div className="pointer-events-none absolute left-0 top-0 z-50 h-[75%] w-[75%] rounded-tl-xl border-l-[2.5px] border-t-[2.5px] border-primary/50" />
+      <div className="pointer-events-none absolute bottom-0 right-0 z-50 h-[75%] w-[75%] rounded-br-xl border-b-[2.5px] border-r-[2.5px] border-primary/50" />
 
       {/* ── Configuration Status Banner ── */}
       <div className={`px-4 py-3 ${buildStatus.bg}`}>
@@ -124,7 +127,7 @@ export default function SummaryPanel() {
               </span>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-1.5 shrink-0">
             <Button
               variant="outline"
@@ -149,7 +152,7 @@ export default function SummaryPanel() {
           </div>
         </div>
 
-        <Progress value={progressPercent} className="mt-2.5 h-1.5" />
+        <Progress value={progressPercent} className="mt-2.5 h-1.5 [&_[data-slot=progress-indicator]]:bg-white" />
       </div>
 
       <Separator className="opacity-40" />
@@ -171,10 +174,6 @@ export default function SummaryPanel() {
 
       {/* ── Compatibility Status ── */}
       <div className="px-5 py-3">
-        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80 mb-3">
-          Compatibility
-        </h4>
-
         {!hasSelections ? (
           <p className="text-xs text-muted-foreground/50 italic">
             Select components to check compatibility
@@ -244,13 +243,12 @@ export default function SummaryPanel() {
 
           {/* PSU Status message */}
           {powerAnalysis.psuStatus !== 'none' && (
-            <div className={`flex items-start gap-2 rounded-md px-2.5 py-1.5 ${
-              powerAnalysis.psuStatus === 'adequate'
+            <div className={`flex items-start gap-2 rounded-md px-2.5 py-1.5 ${powerAnalysis.psuStatus === 'adequate'
                 ? 'bg-emerald-500/8 border border-emerald-500/15'
                 : powerAnalysis.psuStatus === 'tight'
                   ? 'bg-amber-400/5 border border-amber-400/15'
                   : 'bg-destructive/8 border border-destructive/20'
-            }`}>
+              }`}>
               {powerAnalysis.psuStatus === 'adequate' ? (
                 <CheckCircle2 className="mt-0.5 h-3 w-3 text-emerald-500 shrink-0" />
               ) : powerAnalysis.psuStatus === 'tight' ? (
@@ -258,13 +256,12 @@ export default function SummaryPanel() {
               ) : (
                 <AlertCircle className="mt-0.5 h-3 w-3 text-destructive shrink-0" />
               )}
-              <span className={`text-[11px] leading-snug ${
-                powerAnalysis.psuStatus === 'adequate'
+              <span className={`text-[11px] leading-snug ${powerAnalysis.psuStatus === 'adequate'
                   ? 'text-emerald-500/90'
                   : powerAnalysis.psuStatus === 'tight'
                     ? 'text-amber-400/80'
                     : 'text-destructive/90'
-              }`}>
+                }`}>
                 {powerAnalysis.psuMessage}
               </span>
             </div>
@@ -275,9 +272,9 @@ export default function SummaryPanel() {
       <Separator className="opacity-40" />
 
       {/* ── Total Price ── */}
-      <div className="p-4 pt-3 bg-muted/20 rounded-b-xl">
+      <div className="p-4 pt-3 bg-black rounded-b-xl">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-base font-semibold text-muted-foreground">Estimated Total</span>
+          <span className="text-base font-semibold text-white">Estimated Total</span>
           <PriceDisplay value={totalPrice} />
         </div>
       </div>

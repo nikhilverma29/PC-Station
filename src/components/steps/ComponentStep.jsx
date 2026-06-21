@@ -3,6 +3,8 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Dropdown from '@/components/ui/dropdown';
 import ProductCard from '@/components/cards/ProductCard';
+import LearnMoreModal from '@/components/cards/LearnMoreModal';
+import { ScrambleText } from '@/components/ui/ScrambleText';
 import { useConfigurator } from '@/hooks/useConfigurator';
 import {
   productsByCategory,
@@ -106,6 +108,7 @@ export default function ComponentStep({ category }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [brandFilter, setBrandFilter] = useState('all');
   const [sortBy, setSortBy] = useState('');
+  const [learnMoreProduct, setLearnMoreProduct] = useState(null);
 
   const products = productsByCategory[category] || [];
   const brands = getBrandsForCategory(category);
@@ -200,16 +203,19 @@ export default function ComponentStep({ category }) {
     <div>
       {/* Step header */}
       <div className="mb-8">
-        <h2 
+        <ScrambleText 
+          as="h2"
           className="text-4xl text-white tracking-[0.02em]"
           style={{ fontFamily: '"Zrnic", sans-serif' }}
-        >
-          {STEP_LABELS[category]}
-        </h2>
+          text={STEP_LABELS[category]}
+        />
         <div className="mt-2 flex items-center justify-between gap-4">
-          <p className="text-lg text-black font-medium">
-            {STEP_DESCRIPTIONS[category]}
-          </p>
+          <ScrambleText
+            as="p"
+            className="text-lg text-white font-medium tracking-[0.06em]"
+            style={{ fontFamily: '"Zrnic", sans-serif' }}
+            text={STEP_DESCRIPTIONS[category]}
+          />
           
           {/* Sort By Dropdown */}
           {activeSortOptions.length > 0 && (
@@ -220,7 +226,7 @@ export default function ComponentStep({ category }) {
                 options={activeSortOptions}
                 placeholder="Sort By"
                 noneOption={true}
-                className="h-9 min-w-[140px] rounded-md border border-input bg-card/60 px-3 py-1 text-sm text-white font-medium shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
+                className="h-7 min-w-[140px] rounded-md border-0 bg-black px-3 py-0.5 text-sm text-white font-bold shadow-sm focus:outline-none focus:ring-0 cursor-pointer border-t border-l border-r border-white"
               />
             </div>
           )}
@@ -279,6 +285,7 @@ export default function ComponentStep({ category }) {
               isSelected={selected?.id === product.id}
               selections={selections}
               onSelect={handleSelect}
+              onLearnMore={setLearnMoreProduct}
             />
           ))}
         </div>
@@ -289,6 +296,14 @@ export default function ComponentStep({ category }) {
           </p>
         </div>
       )}
+
+      {/* Learn More Modal */}
+      <LearnMoreModal
+        product={learnMoreProduct}
+        selections={selections}
+        open={!!learnMoreProduct}
+        onOpenChange={(open) => !open && setLearnMoreProduct(null)}
+      />
     </div>
   );
 }
