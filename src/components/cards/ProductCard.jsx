@@ -12,12 +12,6 @@ import { getSpecLabels, CATEGORY_IMAGES } from '@/data/products';
 import { checkProductCompatibility } from '@/data/compatibility';
 import { useCurrency } from '@/hooks/useCurrency';
 
-/**
- * ProductCard — Interactive selection card for a single component.
- *
- * Shows product image, name, brand, specs, price, and compatibility status.
- * Handles selection/deselection via onClick callback.
- */
 export default function ProductCard({ product, isSelected, selections, onSelect, onLearnMore }) {
   const { formatPrice } = useCurrency();
   const specLabels = getSpecLabels(product.category);
@@ -30,15 +24,11 @@ export default function ProductCard({ product, isSelected, selections, onSelect,
   );
 
   const specsToShow = Object.entries(specLabels).slice(0, 4);
-  const categoryImage = CATEGORY_IMAGES[product.category];
-  
-  // Use product-specific image if available, otherwise fallback to category image
-  const productImage = product.image || categoryImage;
+  const productImage = product.image || CATEGORY_IMAGES[product.category];
 
   function formatSpecValue(key, value) {
-    if (key === 'wattage') return `${value}W`;
+    if (key === 'wattage' || key === 'tdp') return `${value}W`;
     if (key === 'length') return `${value}mm`;
-    if (key === 'tdp') return `${value}W`;
     return String(value);
   }
 
@@ -54,14 +44,13 @@ export default function ProductCard({ product, isSelected, selections, onSelect,
         }
       }}
       className={cn(
-        'group relative cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] backdrop-blur-xl bg-card/60 overflow-hidden p-0',
+        'group relative flex flex-col cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] backdrop-blur-xl bg-card/60 overflow-hidden p-0',
         'hover:-translate-y-2 hover:scale-[1.06] hover:shadow-2xl hover:shadow-black/50 hover:border-primary',
         isSelected ? 'border-primary ring-1 ring-primary bg-primary/20 shadow-md shadow-primary/10' : 'border-border/60',
         compatibility.hasErrors && !isSelected && 'opacity-40 hover:opacity-60'
       )}
     >
-      <CardContent className="p-0">
-        {/* Product image area (Always rendered to maintain consistent card height) */}
+      <CardContent className="p-0 flex flex-col flex-1">
         <div className="relative h-44 w-full overflow-visible rounded-t-xl bg-muted/20 flex items-center justify-center">
           {productImage && !imageError ? (
             <img
@@ -86,7 +75,6 @@ export default function ProductCard({ product, isSelected, selections, onSelect,
             </div>
           )}
 
-          {/* Status indicator — positioned over image */}
           <div className="absolute top-2.5 right-2.5">
             {isSelected ? (
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary shadow-sm">
@@ -118,12 +106,10 @@ export default function ProductCard({ product, isSelected, selections, onSelect,
           </div>
         </div>
 
-        {/* Card body */}
         <div className={cn(
-          "p-4 pt-3 transition-colors duration-500",
+          "flex-1 p-4 pt-3 transition-colors duration-500",
           !isSelected && !compatibility.hasErrors && 'group-hover:bg-[#312004]'
         )}>
-          {/* Brand + badges row */}
           <div className="mb-2.5 flex items-center gap-1.5">
             <Badge variant="outline" className="text-[10px] font-normal px-1.5 py-0">
               {product.brand}
@@ -135,12 +121,10 @@ export default function ProductCard({ product, isSelected, selections, onSelect,
             )}
           </div>
 
-          {/* Product name */}
           <h3 className="mb-3 text-lg font-bold leading-snug text-foreground/95">
             {product.name}
           </h3>
 
-          {/* Specs grid */}
           <div className="mb-4 grid grid-cols-2 gap-x-3 gap-y-1.5">
             {specsToShow.map(([key, label]) => (
               <div key={key} className="flex flex-col">
@@ -154,7 +138,6 @@ export default function ProductCard({ product, isSelected, selections, onSelect,
             ))}
           </div>
 
-          {/* Price */}
           <div className="flex items-end justify-between border-t border-border/40 pt-4 mt-2">
             <span className="text-2xl font-extrabold tabular-nums tracking-tight">
               {formatPrice(product.price)}

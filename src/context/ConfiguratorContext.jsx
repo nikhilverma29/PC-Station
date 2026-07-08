@@ -1,6 +1,7 @@
-import { createContext, useReducer, useEffect } from 'react';
-import { STEP_ORDER } from '@/data/products';
+import { createContext, useReducer, useEffect, useState } from 'react';
+import { STEP_ORDER, productsByCategory } from '@/data/products';
 import { checkCompatibility } from '@/data/compatibility';
+import { productsAPI, buildsAPI } from '@/services/api';
 
 const STORAGE_KEY = 'pcforge-saved-builds';
 
@@ -163,6 +164,9 @@ function configuratorReducer(state, action) {
         currency: action.payload,
       };
 
+    case 'SET_SAVED_BUILDS':
+      return { ...state, savedBuilds: action.payload };
+
     default:
       return state;
   }
@@ -180,6 +184,45 @@ export const ConfiguratorContext = createContext(null);
 export function ConfiguratorProvider({ children }) {
   const [state, dispatch] = useReducer(configuratorReducer, initialState);
 
+  // ── Products: fetched from API, falls back to static data instantly ──
+  const [products, setProducts] = useState(productsByCategory);
+
+  useEffect(() => {
+    productsAPI.getAll()
+      .then((data) => {
+        const grouped = {};
+        for (const p of data.products) {
+          if (!grouped[p.category]) grouped[p.category] = [];
+          grouped[p.category].push(p);
+        }
+        setProducts(grouped);
+      })
+      .catch(() => { /* API down — static data already in use */ });
+  }, []);
+
+  // ── Cloud builds: load from backend if user is logged in ──
+  useEffect(() => {
+    const token = localStorage.getItem('pc-station-token');
+    if (!token) return;
+    buildsAPI.getAll()
+      .then((data) => {
+        if (data.builds?.length) {
+          dispatch({
+            type: 'SET_SAVED_BUILDS',
+            payload: data.builds.map((b) => ({
+              id: b._id,
+              name: b.name,
+              date: b.updatedAt,
+              selections: b.selections,
+              totalPrice: b.totalPrice,
+              _cloudId: b._id,
+            })),
+          });
+        }
+      })
+      .catch(() => { /* local builds remain */ });
+  }, []);
+
   // Sync saved builds to localStorage whenever they change
   useEffect(() => {
     persistBuilds(state.savedBuilds);
@@ -191,12 +234,45 @@ export function ConfiguratorProvider({ children }) {
     (step) => state.selections[step] !== null
   );
 
+  // ── Cloud-aware dispatch: syncs SAVE/DELETE to backend when logged in ──
+  const cloudDispatch = async (action) => {
+    const token = localStorage.getItem('pc-station-token');
+
+    if (action.type === 'SAVE_BUILD' && token) {
+      dispatch(action);
+      try {
+        await buildsAPI.create(action.payload.name, state.selections, calculateTotal(state.selections));
+        const data = await buildsAPI.getAll();
+        dispatch({
+          type: 'SET_SAVED_BUILDS',
+          payload: data.builds.map((b) => ({
+            id: b._id, name: b.name, date: b.updatedAt,
+            selections: b.selections, totalPrice: b.totalPrice, _cloudId: b._id,
+          })),
+        });
+      } catch { /* local save already done */ }
+      return;
+    }
+
+    if (action.type === 'DELETE_BUILD' && token) {
+      const target = state.savedBuilds.find((b) => b.id === action.payload.buildId);
+      dispatch(action);
+      if (target) {
+        try { await buildsAPI.delete(target._cloudId || target.id); } catch { /* ok */ }
+      }
+      return;
+    }
+
+    dispatch(action);
+  };
+
   const value = {
     ...state,
     totalPrice,
     compatibilityIssues,
     completedSteps,
-    dispatch,
+    dispatch: cloudDispatch,
+    products,
   };
 
   return (

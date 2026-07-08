@@ -22,25 +22,21 @@ const SYMBOLS = {
 
 export function useCurrency() {
   const { currency, dispatch } = useConfigurator();
+  const current = currency || 'INR';
 
   const formatPrice = (priceInUSD) => {
-    // If we somehow don't have a currency yet, default to INR
-    const currentCurrency = currency || 'INR';
-    const rate = EXCHANGE_RATES[currentCurrency] || 1;
-    const symbol = SYMBOLS[currentCurrency] || '$';
-    const converted = priceInUSD * rate;
-    
-    // Formatting rules: JPY and INR show 0 decimal places, others show 2
-    if (currentCurrency === 'JPY' || currentCurrency === 'INR') {
-      return `${symbol}${Math.round(converted).toLocaleString()}`;
-    } else {
-      // For USD, EUR, GBP, CAD, AUD, we show two decimal places but we'll use 
-      // the standard localized string logic so it includes commas (e.g. 1,200.50)
-      return `${symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const rate   = EXCHANGE_RATES[current] || 1;
+    const symbol = SYMBOLS[current] || '$';
+    const value  = priceInUSD * rate;
+
+    // JPY and INR don't use decimal places
+    if (current === 'JPY' || current === 'INR') {
+      return `${symbol}${Math.round(value).toLocaleString()}`;
     }
+    return `${symbol}${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const setCurrency = (c) => dispatch({ type: 'SET_CURRENCY', payload: c });
 
-  return { currency: currency || 'INR', formatPrice, setCurrency };
+  return { currency: current, formatPrice, setCurrency };
 }

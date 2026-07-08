@@ -111,7 +111,6 @@ export default function SummaryPanel() {
       <div className="pointer-events-none absolute left-0 top-0 z-50 h-[75%] w-[75%] rounded-tl-xl border-l-[2.5px] border-t-[2.5px] border-primary/50" />
       <div className="pointer-events-none absolute bottom-0 right-0 z-50 h-[75%] w-[75%] rounded-br-xl border-b-[2.5px] border-r-[2.5px] border-primary/50" />
 
-      {/* ── Configuration Status Banner ── */}
       <div className={`px-4 py-3 ${buildStatus.bg}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -157,7 +156,6 @@ export default function SummaryPanel() {
 
       <Separator className="opacity-40" />
 
-      {/* ── Component List ── */}
       <div className="flex flex-col px-4 py-2">
         {STEP_ORDER.map((category) => (
           <SummaryItem
@@ -172,7 +170,6 @@ export default function SummaryPanel() {
 
       <Separator className="opacity-40" />
 
-      {/* ── Compatibility Status ── */}
       <div className="px-5 py-3">
         {!hasSelections ? (
           <p className="text-xs text-muted-foreground/50 italic">
@@ -212,14 +209,12 @@ export default function SummaryPanel() {
 
       <Separator className="opacity-40" />
 
-      {/* ── Power Draw & PSU Guidance ── */}
       <div className="px-5 py-3">
         <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80 mb-3">
           Power Analysis
         </h4>
 
         <div className="space-y-3">
-          {/* Estimated power draw */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap className="h-3.5 w-3.5 text-amber-400/70" />
@@ -230,7 +225,6 @@ export default function SummaryPanel() {
             </span>
           </div>
 
-          {/* Recommended PSU */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Plug className="h-3.5 w-3.5 text-muted-foreground/50" />
@@ -241,7 +235,6 @@ export default function SummaryPanel() {
             </span>
           </div>
 
-          {/* PSU Status message */}
           {powerAnalysis.psuStatus !== 'none' && (
             <div className={`flex items-start gap-2 rounded-md px-2.5 py-1.5 ${powerAnalysis.psuStatus === 'adequate'
                 ? 'bg-emerald-500/8 border border-emerald-500/15'
@@ -279,7 +272,6 @@ export default function SummaryPanel() {
         </div>
       </div>
 
-      {/* Save Dialog */}
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
@@ -323,7 +315,6 @@ export default function SummaryPanel() {
         </DialogContent>
       </Dialog>
 
-      {/* Reset Dialog */}
       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
@@ -343,7 +334,6 @@ export default function SummaryPanel() {
         </DialogContent>
       </Dialog>
 
-      {/* Incomplete Warning Dialog */}
       <Dialog open={incompleteWarningOpen} onOpenChange={setIncompleteWarningOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
